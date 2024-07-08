@@ -1,4 +1,13 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+// @ts-check
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const nextConfig = {
+  sassOptions: {
+    includePaths: [__dirname + "/styles"],
+  },
+};
 
 export default nextConfig;
