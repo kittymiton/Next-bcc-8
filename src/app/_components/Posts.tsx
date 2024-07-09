@@ -1,13 +1,13 @@
 "use client";
 
+import { API_BASE_URL } from "@/_constants/constants";
+import { Post } from "@/_types/Post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../constants/constants";
-import type { PostType } from "../types/PostType";
 
 export default function Posts() {
   // 初期値[空配列]設定でpostsがundefindでmapメソッドのエラー回避
-  const [posts, setPosts] = useState<PostType[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   // Loadingの格納・表示
   // 初期ロード時は無効
@@ -27,7 +27,7 @@ export default function Posts() {
           // consoleに表示
           throw new Error("データが見つかりません");
         }
-        const { posts } = (await res.json()) as { posts: PostType[] };
+        const { posts } = (await res.json()) as { posts: Post[] };
         setPosts(posts);
       } catch (error) {
         // errorは最初にunknown型として扱われる

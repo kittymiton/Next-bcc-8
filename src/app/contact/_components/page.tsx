@@ -1,12 +1,12 @@
 "use client";
 
+import { API_BASE_URL } from "@/_constants/constants";
+import { Button } from "@/contact/_components/Button";
+import { ErrorMessage } from "@/contact/_components/ErrorMessage";
+import { Label } from "@/contact/_components/Label";
+import { TextArea } from "@/contact/_components/TextArea";
+import { TextInput } from "@/contact/_components/TextInput";
 import { useState } from "react";
-import { API_BASE_URL } from "../../components/constants/constants";
-import { Button } from "./Button";
-import { ErrorMessage } from "./ErrorMessage";
-import { Label } from "./Label";
-import { TextArea } from "./TextArea";
-import { TextInput } from "./TextInput";
 
 export default function Contact() {
   // ユーザー入力値を保存・表示

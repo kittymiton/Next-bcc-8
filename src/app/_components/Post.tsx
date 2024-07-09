@@ -1,11 +1,11 @@
 "use client";
 
+import { API_BASE_URL } from "@/_constants/constants";
+import type { Post } from "@/_types/Post";
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../../components/constants/constants";
-import type { PostType } from "../../components/types/PostType";
 
 export default function Post({ id }: { id: number }) {
-  const [post, setPost] = useState<PostType | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -17,7 +17,7 @@ export default function Post({ id }: { id: number }) {
         if (!res.ok) {
           throw new Error("データが見つかりません");
         }
-        const { post } = (await res.json()) as { post: PostType };
+        const { post } = (await res.json()) as { post: Post };
         console.log(post);
         setPost(post);
       } catch (error) {

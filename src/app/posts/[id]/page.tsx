@@ -1,7 +1,7 @@
 "use client";
 
+import Post from "@/_components/Post";
 import { useParams } from "next/navigation";
-import Post from "../../components/features/Post";
 
 export default function Page() {
   const { id } = useParams<{ id: string }>();
