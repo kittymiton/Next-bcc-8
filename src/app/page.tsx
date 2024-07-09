@@ -1,95 +1,84 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { API_BASE_URL } from "@/_constants/constants";
+import { Post } from "@/_types/Post";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  // 初期値[空配列]設定でpostsがundefindでmapメソッドのエラー回避
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  // Loadingの格納・表示
+  // 初期ロード時は無効
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // featchエラーの格納・表示
+  // JSで空配列[]はtruthy。nullはfalsy。
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetcher = async (): Promise<void> => {
+      try {
+        // ローディングインジケーター表示
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}/posts`);
+        if (!res.ok) {
+          // consoleに表示
+          throw new Error("データが見つかりません");
+        }
+        const { posts } = (await res.json()) as { posts: Post[] };
+        setPosts(posts);
+      } catch (error) {
+        // errorは最初にunknown型として扱われる
+        if (error instanceof Error) {
+          setError(error);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetcher();
+  }, []);
+
+  // ローディング中
+  if (loading) {
+    return <div>読込中・・・</div>;
+  }
+
+  // fetchエラー
+  if (error) {
+    return <div> 記事取得エラー: {error.message}</div>;
+  }
+
+  // 取得したデータが空である場合
+  if (!loading && !posts) {
+    return <div>記事が存在しません</div>;
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+    <main>
+      <ul>
+        {/* 取得したpostsデータが配列なのでmapでloop */}
+        {posts.map((post) => (
+          <li key={post.id}>
+            <Link href={`posts/${post.id}`}>
+              <div className="post">
+                <div className="post-info">
+                  <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                  <ul>
+                    {post.categories.map((category) => (
+                      <li key={category}>{category}</li>
+                    ))}
+                  </ul>
+                </div>
+                <h1>{post.title}</h1>
+                <p dangerouslySetInnerHTML={{ __html: post.content }} />
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
