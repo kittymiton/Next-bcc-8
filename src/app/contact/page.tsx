@@ -8,7 +8,7 @@ import { TextArea } from "@/contact/_components/TextArea";
 import { TextInput } from "@/contact/_components/TextInput";
 import { useState } from "react";
 
-export default function Contact() {
+export default function Page() {
   // ユーザー入力値を保存・表示
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
