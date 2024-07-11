@@ -2,6 +2,7 @@
 
 import { API_BASE_URL } from "@/_constants/constants";
 import type { MicroCmsPost } from "@/_types/MicroCmsPost";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,6 +11,7 @@ export default function Page() {
   const [post, setPost] = useState<MicroCmsPost | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [ratio, setRatio] = useState(3 / 4);
 
   useEffect(() => {
     const fetcher = async (): Promise<void> => {
@@ -53,7 +55,17 @@ export default function Page() {
   return (
     <main>
       <div className="post-detail">
-        <img src={post.thumbnail.url} alt={post.title} height={300} />
+        <Image
+          src={post.thumbnail.url}
+          alt={post.title}
+          layout="responsive"
+          objectFit="cover"
+          width={280}
+          height={Math.round(280 * ratio)}
+          onLoadingComplete={({ naturalWidth, naturalHeight }) => {
+            setRatio(naturalHeight / naturalWidth);
+          }}
+        />
         <div className="post-info">
           <p>{new Date(post.createdAt).toLocaleDateString()}</p>
           <ul>
