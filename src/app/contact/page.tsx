@@ -79,11 +79,9 @@ export default function Page() {
         },
         body: JSON.stringify({ name, email, message }),
       });
-
       if (!res.ok) {
         throw new Error("status error");
       }
-
       alert("送信しました");
     } catch (error) {
       console.error(error);
