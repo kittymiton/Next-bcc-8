@@ -87,12 +87,9 @@ export const PUT = async (request: NextRequest, { params }: { params: { id: stri
 export const DELETE = async (request: NextRequest, { params }: { params: { id: string } }) => {
   const { id } = params;
 
-  // リクエストのbodyを取得
-  const { title, content, categories, thumbnailUrl } = await request.json();
-
   try {
     // idを指定して、Postを削除
-    const post = await prisma.post.delete({
+    await prisma.post.delete({
       where: {
         id: parseInt(id), // IDを数値に変換
       },
