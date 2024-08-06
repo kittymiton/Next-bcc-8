@@ -9,7 +9,6 @@ export default function Page() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [ratio, setRatio] = useState(3 / 4);
 
   useEffect(() => {
     const fetcher = async (): Promise<void> => {
@@ -47,17 +46,6 @@ export default function Page() {
   return (
     <main>
       <div className="post-detail">
-        {/* <Image
-          src={post.thumbnailUrl}
-          alt={post.title}
-          layout="responsive"
-          objectFit="cover"
-          width={280}
-          height={Math.round(280 * ratio)}
-          onLoadingComplete={({ naturalWidth, naturalHeight }) => {
-            setRatio(naturalHeight / naturalWidth);
-          }}
-        /> */}
         <div className="post-info">
           <p>{new Date(post.createdAt).toLocaleDateString()}</p>
           <ul>

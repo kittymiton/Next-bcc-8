@@ -7,7 +7,7 @@ export const SideNavi = () => {
   const pathname = usePathname();
   // 受け取ったパスと現在のルートパスが一致するか検証
   const isActive = (path: string) => {
-    return pathname === path;
+    return pathname.startsWith(path);
   };
 
   return (

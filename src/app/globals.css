@@ -47,7 +47,6 @@ main {
   margin: auto;
 }
 .post {
-  margin: 2rem;
   padding: 1.6rem;
   border-bottom: 1px solid #aaa;
   color: #333;
@@ -133,13 +132,3 @@ form button:hover {
 .w100 {
   width: 100%;
 }
-/* NavLinkで適用された現在のページ */
-/* .active {
-  color: rgb(239, 206, 204);
-} */
-/* a:hover {
-  color: rgb(213, 239, 204);
-} */
-/* .no-hover:hover {
-  color: #fff; ホバー時の色を元の色と同じにする
-} */

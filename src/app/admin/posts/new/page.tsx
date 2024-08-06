@@ -2,7 +2,6 @@
 
 import { SideNavi } from "@/_components/SideNavi";
 import type { Category } from "@/_types/Category";
-import type { Post } from "@/_types/Post";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
@@ -10,45 +9,29 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import { createTheme } from "@mui/material/styles";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { id } = useParams(); //動的にid取得
-  const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter(); //ページ遷移
 
-  // 記事更新用
+  // 新規記事作成用
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState("https://placehold.jp/800x400.png");
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
-  // 詳細記事取得　idが変わるたびに実行
+  // 全カテゴリデータのフェッチ
   useEffect(() => {
     const fetcher = async (): Promise<void> => {
       try {
         setLoading(true);
 
-        // 投稿データのフェッチ
-        const res = await fetch(`/api/admin/posts/${id}`);
-        if (!res.ok) {
-          throw new Error("データが見つかりません");
-        }
-        const { post }: { post: Post } = await res.json(); //{Post型}
-        //console.log(post);
-        setPost(post);
-        setTitle(post.title);
-        setContent(post.content);
-        setThumbnailUrl(post.thumbnailUrl);
-        setSelectedCategories(post.postCategories.map((postCategory) => postCategory.category));
-
-        // 全カテゴリデータのフェッチ
-        const categoriesRes = await fetch("/api/admin/categories");
-        const { categories } = await categoriesRes.json();
+        const res = await fetch("/api/admin/categories");
+        const { categories } = await res.json();
         setCategories(categories);
 
         //例外がthrowされたらcatch実行
@@ -62,53 +45,7 @@ export default function Page() {
       }
     };
     fetcher();
-  }, [id]);
-
-  // 更新ボタンの処理
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`/api/admin/posts/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          thumbnailUrl,
-          categories: selectedCategories,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("status error");
-      }
-      alert("更新しました");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // 削除ボタンの処理
-  const handleDeletePost = async (): Promise<void> => {
-    if (!confirm("記事を削除してよいですか")) return;
-
-    try {
-      const res = await fetch(`/api/admin/posts/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        throw new Error("status error");
-      }
-      alert("記事を削除しました");
-      router.push("/admin/posts");
-    } catch (error) {
-      console.error(error);
-      alert("記事の削除に失敗しました");
-    }
-  };
+  }, []);
 
   // カテゴリ選択解除する関数
   const handleChange = (value: number[]) => {
@@ -124,6 +61,36 @@ export default function Page() {
     });
   };
 
+  // 作成ボタンの処理
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`/api/admin/posts/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          thumbnailUrl,
+          categories: selectedCategories,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("status error");
+      }
+
+      const { id } = await res.json();
+      // 作成した記事の詳細ページに遷移
+      router.push(`/admin/posts/${id}`);
+      alert("作成しました");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // スタイルオブジェクトを生成
   const getStyles = (id: number, selectedIds: number[], theme: any) => {
     return {
@@ -132,7 +99,7 @@ export default function Page() {
     };
   };
 
-  // TODO そもそも.Mui-selectedが適用されてない
+  // TODO そもそも.Mui-selectedクラスが適用されてない
   const theme = createTheme({
     palette: {
       action: {
@@ -140,19 +107,6 @@ export default function Page() {
       },
     },
   });
-  //console.log(theme.palette.action.selected);
-
-  if (loading) {
-    return <div>読込中・・・</div>;
-  }
-  //throwされたエラーメッセージが表示
-  if (error) {
-    return <div>記事取得エラー: {error.message}</div>;
-  }
-
-  if (!post) {
-    return <div>記事が存在しません</div>;
-  }
 
   return (
     <main>
@@ -160,7 +114,7 @@ export default function Page() {
         <SideNavi />
         <div className="admin-contents">
           <div className="admin-contents__header">
-            <h1>記事編集</h1>
+            <h1>記事作成</h1>
           </div>
           <form onSubmit={handleSubmit}>
             {/* onSubmit属性でフォームが送信される際に実行されるJSを指定 */}
@@ -192,12 +146,12 @@ export default function Page() {
                 multiple // multipleは選択された値を配列として渡す
                 value={selectedCategories}
                 // 各選択アクションのたびに選択された項目が配列として管理
-                onChange={(e) => handleChange(e.target.value as unknown as number[])} // 最初にunknownに変換し任意の型に変換するための中間ステップを作りnumber[]型に再度変換
-                input={<OutlinedInput />} // 入力フィールドがフォーカスされたときにアウトラインが強調されるデザイン
+                onChange={(e) => handleChange(e.target.value as unknown as number[])} // 最初にunknown 任意の型に変換するため中間ステップを作りnumber[]型に再度変換
+                input={<OutlinedInput />} // フォーカス時にアウトラインが強調されるデザイン
                 renderValue={(selected: Category[]) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((category: Category) => (
-                      <Chip key={category.id} label={category.name} /> // タグやカテゴリの表示、選択された項目の表示 見た目は小さなバッジやラベルのよう視覚的な情報を提供
+                      <Chip key={category.id} label={category.name} /> // Chipはタグやカテゴリ、選択された項目の表示などに使われ小さなバッジやラベルのようなものを提供
                     ))}
                   </Box>
                 )}
@@ -218,12 +172,7 @@ export default function Page() {
               </Select>
             </FormControl>
             {/* フォームの送信をトリガー */}
-            <div className="button-mode">
-              <button type="submit">更新</button>
-              <button type="button" onClick={() => handleDeletePost()}>
-                削除
-              </button>
-            </div>
+            <button type="submit">作成</button>
           </form>
         </div>
       </div>
