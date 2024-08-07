@@ -1,6 +1,5 @@
 "use client";
 
-import { SideNavi } from "@/_components/SideNavi";
 import type { Category } from "@/_types/Category";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -34,25 +33,22 @@ export default function page() {
 
   return (
     <main>
-      <div className="admin-layout">
-        <SideNavi />
-        <div className="admin-contents">
-          <div className="admin-contents__header">
-            <h1>カテゴリ一覧</h1>
-            <button>
-              <Link href="/admin/categories/new">新規作成</Link>
-            </button>
-          </div>
-          <ul className="admin-contents__list">
-            {categories.map((category) => (
-              <li key={category.id}>
-                <Link href={`/admin/categories/${category.id}`}>
-                  <p>{category.name}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="admin-contents">
+        <div className="admin-contents__header">
+          <h1>カテゴリ一覧</h1>
+          <button>
+            <Link href="/admin/categories/new">新規作成</Link>
+          </button>
         </div>
+        <ul className="admin-contents__list">
+          {categories.map((category) => (
+            <li key={category.id}>
+              <Link href={`/admin/categories/${category.id}`}>
+                <p>{category.name}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </main>
   );

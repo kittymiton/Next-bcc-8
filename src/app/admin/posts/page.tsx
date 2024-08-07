@@ -1,6 +1,5 @@
 "use client";
 
-import { SideNavi } from "@/_components/SideNavi";
 import type { Post } from "@/_types/Post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -43,31 +42,28 @@ export default function page() {
 
   return (
     <main>
-      <div className="admin-layout">
-        <SideNavi />
-        <div className="admin-contents">
-          <div className="admin-contents__header">
-            <h1>記事一覧</h1>
-            <button>
-              <Link href="/admin/posts/new">新規作成</Link>
-            </button>
-          </div>
-          <ul className="admin-contents__list">
-            {/* 取得したpostsデータが配列なのでmapでloop */}
-            {posts.map((post) => (
-              <li key={post.id}>
-                <Link href={`/admin/posts/${post.id}`}>
-                  <div className="post">
-                    <div>
-                      <h1>{post.title}</h1>
-                      <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="admin-contents">
+        <div className="admin-contents__header">
+          <h1>記事一覧</h1>
+          <button>
+            <Link href="/admin/posts/new">新規作成</Link>
+          </button>
         </div>
+        <ul className="admin-contents__list">
+          {/* 取得したpostsデータが配列なのでmapでloop */}
+          {posts.map((post) => (
+            <li key={post.id}>
+              <Link href={`/admin/posts/${post.id}`}>
+                <div className="post">
+                  <div>
+                    <h1>{post.title}</h1>
+                    <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </main>
   );

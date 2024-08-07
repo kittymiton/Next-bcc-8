@@ -1,14 +1,7 @@
 "use client";
 
-import { SideNavi } from "@/_components/SideNavi";
 import type { Category } from "@/_types/Category";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
-import FormControl from "@mui/material/FormControl";
-import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import Select from "@mui/material/Select";
-import { createTheme } from "@mui/material/styles";
+import { PostForm } from "@/admin/posts/_components/PostForm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -47,20 +40,6 @@ export default function Page() {
     fetcher();
   }, []);
 
-  // カテゴリ選択解除する関数
-  const handleChange = (value: number[]) => {
-    value.forEach((valueId: number) => {
-      const isSelect = selectedCategories.some((category) => category.id === valueId);
-      if (isSelect) {
-        setSelectedCategories(selectedCategories.filter((category) => category.id !== valueId));
-        return;
-      }
-      const category = categories.find((category) => category.id === valueId);
-      if (!category) return;
-      setSelectedCategories([...selectedCategories, category]);
-    });
-  };
-
   // 作成ボタンの処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,90 +70,26 @@ export default function Page() {
     }
   };
 
-  // スタイルオブジェクトを生成
-  const getStyles = (id: number, selectedIds: number[], theme: any) => {
-    return {
-      fontWeight: selectedIds.indexOf(id) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold,
-      backgroundColor: selectedIds.indexOf(id) !== -1 ? theme.palette.action.selected : "transparent",
-    };
-  };
-
-  // TODO そもそも.Mui-selectedクラスが適用されてない
-  const theme = createTheme({
-    palette: {
-      action: {
-        selected: "rgba(25, 118, 210, 0.08)", // デフォルトの薄い水色
-      },
-    },
-  });
-
   return (
     <main>
-      <div className="admin-layout">
-        <SideNavi />
-        <div className="admin-contents">
-          <div className="admin-contents__header">
-            <h1>記事作成</h1>
-          </div>
-          <form onSubmit={handleSubmit}>
-            {/* onSubmit属性でフォームが送信される際に実行されるJSを指定 */}
-            <label htmlFor="title">タイトル</label>
-            {/* htmlFor属性の値とid属性の値でラベルと入力要素が関連付け */}
-            <div className="write-area">
-              <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-
-            <label htmlFor="content">内容</label>
-            <div className="write-area">
-              <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} />
-            </div>
-
-            <label htmlFor="thumbnailUrl">サムネイルURL</label>
-            <div className="write-area">
-              <input
-                type="text"
-                id="thumbnailUrl"
-                value={thumbnailUrl}
-                onChange={(e) => setThumbnailUrl(e.target.value)}
-              />
-            </div>
-
-            <label htmlFor="category">カテゴリ</label>
-            <FormControl sx={{ width: 500 }}>
-              <Select
-                className="w100"
-                multiple // multipleは選択された値を配列として渡す
-                value={selectedCategories}
-                // 各選択アクションのたびに選択された項目が配列として管理
-                onChange={(e) => handleChange(e.target.value as unknown as number[])} // 最初にunknown 任意の型に変換するため中間ステップを作りnumber[]型に再度変換
-                input={<OutlinedInput />} // フォーカス時にアウトラインが強調されるデザイン
-                renderValue={(selected: Category[]) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((category: Category) => (
-                      <Chip key={category.id} label={category.name} /> // Chipはタグやカテゴリ、選択された項目の表示などに使われ小さなバッジやラベルのようなものを提供
-                    ))}
-                  </Box>
-                )}
-              >
-                {categories.map((category) => (
-                  <MenuItem
-                    key={category.id}
-                    value={category.id}
-                    sx={getStyles(
-                      category.id,
-                      selectedCategories.map((category) => category.id),
-                      theme
-                    )}
-                  >
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* フォームの送信をトリガー */}
-            <button type="submit">作成</button>
-          </form>
+      <div className="admin-contents">
+        <div className="admin-contents__header">
+          <h1>記事作成</h1>
         </div>
+        {/* PostFormに渡す */}
+        <PostForm
+          mode="new"
+          title={title}
+          setTitle={setTitle}
+          content={content}
+          setContent={setContent}
+          thumbnailUrl={thumbnailUrl}
+          setThumbnailUrl={setThumbnailUrl}
+          categories={categories}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+          onSubmit={handleSubmit}
+        />
       </div>
     </main>
   );

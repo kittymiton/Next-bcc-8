@@ -1,8 +1,8 @@
 "use client";
 
-import { SideNavi } from "@/_components/SideNavi";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CategoryForm } from "../_components/CategoryForm";
 
 export default function Page() {
   const { id } = useParams(); //動的にid取得
@@ -13,7 +13,6 @@ export default function Page() {
 
   // 更新ボタンの処理
   const handleSubmit = async (e: React.FormEvent) => {
-    // フォームのデフォルトの動作をキャンセルします。
     e.preventDefault();
     try {
       const res = await fetch(`/api/admin/categories/${id}`, {
@@ -90,28 +89,11 @@ export default function Page() {
 
   return (
     <main>
-      <div className="admin-layout">
-        <SideNavi />
-        <div className="admin-contents">
-          <div className="admin-contents__header">
-            <h1>カテゴリ編集</h1>
-          </div>
-          <form onSubmit={handleSubmit}>
-            {/* onSubmit属性でフォームが送信される際に実行されるJSを指定 */}
-            <label htmlFor="category">カテゴリ名</label>
-            {/* htmlFor属性の値とid属性の値でラベルと入力要素が関連付け */}
-            <div className="write-area">
-              <input type="text" id="category" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            {/* フォームの送信をトリガー */}
-            <div className="button-mode">
-              <button type="submit">更新</button>
-              <button type="button" onClick={() => handleDeletePost()}>
-                削除
-              </button>
-            </div>
-          </form>
+      <div className="admin-contents">
+        <div className="admin-contents__header">
+          <h1>カテゴリ編集</h1>
         </div>
+        <CategoryForm mode="edit" name={name} setName={setName} onSubmit={handleSubmit} onDelete={handleDeletePost} />
       </div>
     </main>
   );
