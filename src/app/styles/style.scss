@@ -1,8 +1,95 @@
 .post-detail {
+  width: min(100%, 800px);
+  margin: 4rem;
+  border: none;
+  color: #333;
   h1 {
     color: darkblue;
   }
   img {
     max-width: 280px;
+    margin: 0 0 1.6rem;
   }
+  p {
+    margin: 1.6rem 0 0;
+    font-size: 1.6rem;
+  }
+}
+.admin-layout {
+  display: flex;
+  aside {
+    flex: 0 0 150px;
+    background: rgb(233 233 233);
+    color: #222;
+    height: 800px;
+    .active {
+      background: rgb(202, 240, 255);
+    }
+    a {
+      font-size: 1.6rem;
+      color: #222;
+      display: block;
+      padding: 1rem;
+    }
+  }
+}
+.admin-contents {
+  width: min(100%, 800px);
+  margin: 0 auto;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex: auto;
+    height: 45px;
+    margin: 2rem 0 0;
+    padding: 1rem;
+    &--single {
+      display: block;
+      height: auto;
+    }
+    h1 {
+      width: 200px;
+    }
+    button {
+      color: #fff;
+      background: rgb(64, 64, 233);
+      aspect-ratio: 16 / 9;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+  &__list {
+    margin: 2rem;
+    li {
+      display: flex;
+      flex-direction: column;
+      margin: 2rem 0 0;
+      padding: 0 0 1rem;
+      a {
+        color: inherit;
+      }
+    }
+    dl {
+      font-size: 1.6rem;
+    }
+    dd {
+      padding: 1.6rem;
+      border: 1px solid #aaa;
+      border-radius: 0.4rem;
+    }
+    dd {
+      font-weight: 600;
+    }
+  }
+  &__button {
+    display: flex;
+    gap: 1rem;
+    width: 370px;
+  }
+}
+.button-mode {
+  display: flex;
+  justify-content: flex-start;
 }

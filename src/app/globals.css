@@ -6,13 +6,24 @@ p,
 ul,
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5 {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
 }
 ul {
   list-style-type: none;
+}
+button {
+  border: none;
+}
+dl,
+dt,
+dd {
+  margin: 0;
+  padding: 0;
 }
 nav > ul {
   display: flex;
@@ -29,17 +40,12 @@ a {
   text-decoration: none;
   color: #fff;
 }
-/* a:visited {
-  color: inherit;
-} */
 main {
-  width: min(100%, 800px);
-  margin: 0 auto;
+  width: max(100%, 800px);
 }
 .post {
-  margin: 4rem;
   padding: 1.6rem;
-  border: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
   color: #333;
 }
 .post-info,
@@ -72,19 +78,7 @@ main {
   display: -webkit-box;
   overflow: hidden;
 }
-.post-detail {
-  margin: 4rem;
-  border: none;
-  color: #333;
-}
-.post-detail img {
-  max-width: 100%;
-  margin: 0 0 1.6rem;
-}
-.post-detail > p {
-  margin: 1.6rem 0 0;
-  font-size: 1.6rem;
-}
+
 .contact-title {
   margin: 4rem;
   font-size: 2rem;
@@ -103,23 +97,21 @@ form > div {
   gap: 1.6rem;
   font-size: 1.6rem;
 }
-form label {
-  width: 30%;
-}
 form .write-area {
   flex: 1;
   color: red;
 }
 form input,
-form textarea {
+form textarea,
+form select {
   width: 100%;
   padding: 1.6rem;
   border: 1px solid #aaa;
   border-radius: 0.4rem;
 }
-form div:last-of-type {
+/* form div:last-of-type {
   justify-content: center;
-}
+} */
 form button {
   margin: 2.4rem 0 0;
   padding: 0.8rem;
@@ -134,13 +126,6 @@ form button:first-of-type {
 form button:hover {
   cursor: pointer;
 }
-/* NavLinkで適用された現在のページ */
-/* .active {
-  color: rgb(239, 206, 204);
-} */
-/* a:hover {
-  color: rgb(213, 239, 204);
-} */
-/* .no-hover:hover {
-  color: #fff; ホバー時の色を元の色と同じにする
-} */
+.w100 {
+  width: 100%;
+}
