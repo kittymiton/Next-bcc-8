@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
 import type { Category } from "@/_types/Category";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -8,13 +9,21 @@ export default function page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const { token } = useSupabaseSession();
 
   // 全カテゴリデータのフェッチ
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async (): Promise<void> => {
       try {
         setLoading(true);
-        const res = await fetch("/api/admin/categories");
+        const res = await fetch("/api/admin/categories", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        });
         const { categories } = await res.json();
         setCategories(categories);
 
@@ -29,7 +38,7 @@ export default function page() {
       }
     };
     fetcher();
-  }, []);
+  }, [token]);
 
   return (
     <main>

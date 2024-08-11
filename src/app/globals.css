@@ -28,12 +28,15 @@ dd {
 nav > ul {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  gap: 2%;
   padding: 2.4rem;
   color: #fff;
   font-size: 1.6rem;
   font-weight: 700;
   background: #333;
+}
+nav > ul li:nth-child(1) {
+  margin-right: auto;
 }
 a {
   display: block;

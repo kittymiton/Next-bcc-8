@@ -6,7 +6,7 @@ export type Post = {
   content: string;
   createdAt: number;
   postCategories: { category: Category }[];
-  thumbnailUrl: string;
+  thumbnailImageKey: string;
 };
 
 export interface MicroCmsPost {

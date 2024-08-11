@@ -1,10 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "src/utils/supabase";
 
 const prisma = new PrismaClient();
 
 // GETリクエストで呼ばれる関数
 export const GET = async (request: NextRequest) => {
+  // 認証情報を取得
+  const token = request.headers.get("Authorization") ?? ""; // 左側の値がnullまたはundefinedである場合、右側の値を返す
+
+  // supabaseにtoken送信
+  const { error } = await supabase.auth.getUser(token);
+
+  // 送信されたtokenがSupabaseで検証され、無効（期限切、一致しない）であればエラー
+  if (error) return NextResponse.json({ status: error.message }, { status: 400 });
+
   try {
     // Post一覧をDBから取得　findManyで複数のレコードを取得できる
     const posts = await prisma.post.findMany({
@@ -36,26 +46,26 @@ export const GET = async (request: NextRequest) => {
 };
 
 // 記事作成のリクエストボディの型
-interface CreatePostRequestBody {
+type CreatePostRequestBody = {
   title: string;
   content: string;
   categories: { id: number }[];
-  thumbnailUrl: string;
-}
+  thumbnailImageKey: string;
+};
 
 // POSTで呼ばれる関数
 export const POST = async (request: Request, context: any) => {
   try {
     // リクエストのbodyを取得
     const body = await request.json();
-    const { title, content, categories, thumbnailUrl }: CreatePostRequestBody = body;
+    const { title, content, categories, thumbnailImageKey }: CreatePostRequestBody = body;
 
     // 投稿をDBに生成
     const data = await prisma.post.create({
       data: {
         title,
         content,
-        thumbnailUrl,
+        thumbnailImageKey,
       },
     });
 

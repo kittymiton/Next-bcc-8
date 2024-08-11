@@ -1,9 +1,13 @@
 "use client";
 
+import { useRouteGuard } from "@/admin/_hooks/useRouteGuard";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  // 全ての管理者用ページに適用
+  useRouteGuard();
+
   const pathname = usePathname();
   // 受け取ったパスと現在のルートパスが一致するか検証
   const isActive = (path: string) => {
