@@ -107,7 +107,7 @@ export default function Page() {
         method: "DELETE",
         headers: {
           "Content-Type": "application.json",
-          Authorizaition: token!,
+          Authorization: token!,
         },
       });
 
