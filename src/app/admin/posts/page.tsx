@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
 import type { Post } from "@/_types/Post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -9,16 +10,29 @@ export default function page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const { token } = useSupabaseSession();
+
   useEffect(() => {
+    if (!token) return;
+
     const featcher = async (): Promise<void> => {
       try {
         setLoading(true);
-        const res = await fetch("/api/admin/posts");
+
+        const res = await fetch("/api/admin/posts", {
+          // fetchの第二引数のオプションでheadersを指定
+          headers: {
+            "Content-Type": "application/json",
+            // Authorizationというキー名で、tokenを持たせる
+            Authorization: token, // サーバーにtokenを送信
+          },
+        });
+
         if (!res.ok) {
           throw new Error("データがみつかりません");
         }
         const { posts } = await res.json();
-        setPosts(posts);
+        setPosts([...posts]); // postsのコピーを作成し、それをセットする
       } catch (error) {
         if (error instanceof Error) {
           setError(error);
@@ -28,7 +42,7 @@ export default function page() {
       }
     };
     featcher();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return <div>読込中・・・</div>;

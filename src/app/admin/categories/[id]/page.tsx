@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CategoryForm } from "../_components/CategoryForm";
@@ -10,6 +11,7 @@ export default function Page() {
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter(); //ページ遷移
   const [name, setName] = useState("");
+  const { token } = useSupabaseSession();
 
   // 更新ボタンの処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,6 +21,8 @@ export default function Page() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          // 認証済みを証明するためのトークンを送信
+          Authorization: token!, // ！は非nullアサーションオペレーターでtokenの値をそのまま使う。ログイン済みのユーザーが関数を実行している前提。
         },
         body: JSON.stringify({ name }),
       });
@@ -40,6 +44,10 @@ export default function Page() {
     try {
       const res = await fetch(`/api/admin/categories/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Autherization: token!,
+        },
       });
 
       if (!res.ok) {
@@ -55,10 +63,17 @@ export default function Page() {
 
   // カテゴリデータのフェッチ
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async (): Promise<void> => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/admin/categories/${id}`);
+        const res = await fetch(`/api/admin/categories/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token, // サーバーにtokenを送信
+          },
+        });
         if (!res.ok) {
           throw new Error("カテゴリデータが見つかりません");
         }
@@ -77,7 +92,7 @@ export default function Page() {
       }
     };
     fetcher();
-  }, [id]);
+  }, [id, token]);
 
   if (loading) {
     return <div>読込中・・・</div>;

@@ -1,6 +1,8 @@
 "use client";
 
 import type { Post } from "@/_types/Post";
+import { supabase } from "@/utils/supabase";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -9,6 +11,7 @@ export default function Page() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(null);
 
   useEffect(() => {
     const fetcher = async (): Promise<void> => {
@@ -30,6 +33,21 @@ export default function Page() {
     };
     fetcher();
   }, [id]);
+
+  // DBに保存しているthumbnailImageKeyを元に、Supabaseから画像のURLを取得
+  useEffect(() => {
+    if (!post?.thumbnailImageKey) return;
+
+    // Supabaseの公開画像URLを取得
+    const fetcher = async () => {
+      const {
+        data: { publicUrl },
+      } = await supabase.storage.from("post_thumbnail").getPublicUrl(post.thumbnailImageKey);
+      setThumbnailImageUrl(publicUrl);
+    };
+
+    fetcher();
+  }, [post?.thumbnailImageKey]);
 
   if (loading) {
     return <div>読込中・・・</div>;
@@ -56,6 +74,7 @@ export default function Page() {
         </div>
         <h1>{post.title}</h1>
         <p dangerouslySetInnerHTML={{ __html: post.content }} />
+        {thumbnailImageUrl && <Image src={thumbnailImageUrl} alt="サムネイル" width={400} height={300} />}
       </div>
     </main>
   );

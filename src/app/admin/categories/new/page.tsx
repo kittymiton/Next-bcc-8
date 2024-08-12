@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CategoryForm } from "../_components/CategoryForm";
@@ -7,6 +8,7 @@ import { CategoryForm } from "../_components/CategoryForm";
 export default function Page() {
   const router = useRouter(); //ページ遷移
   const [name, setName] = useState("");
+  const { token } = useSupabaseSession();
 
   // 作成ボタンの処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,6 +18,7 @@ export default function Page() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token!,
         },
         body: JSON.stringify({ name }), // バックエンドが受け取る名前
       });

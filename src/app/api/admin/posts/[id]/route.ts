@@ -44,7 +44,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { id: stri
   const { id } = params;
 
   // リクエストのbodyを取得
-  const { title, content, categories, thumbnailUrl } = await request.json();
+  const { title, content, categories, thumbnailImageKey } = await request.json();
 
   try {
     // idを指定して、Postを更新
@@ -55,7 +55,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { id: stri
       data: {
         title,
         content,
-        thumbnailUrl,
+        thumbnailImageKey,
       },
     });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
 import type { Category } from "@/_types/Category";
 import { PostForm } from "@/admin/posts/_components/PostForm";
 import { useRouter } from "next/navigation";
@@ -13,17 +14,26 @@ export default function Page() {
   // 新規記事作成用
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState("https://placehold.jp/800x400.png");
+  const [thumbnailImageKey, setThumbnailImageKey] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
+  const { token } = useSupabaseSession();
+
   // 全カテゴリデータのフェッチ
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async (): Promise<void> => {
       try {
         setLoading(true);
 
-        const res = await fetch("/api/admin/categories");
+        const res = await fetch("/api/admin/categories", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        });
         const { categories } = await res.json();
         setCategories(categories);
 
@@ -38,7 +48,7 @@ export default function Page() {
       }
     };
     fetcher();
-  }, []);
+  }, [token]);
 
   // 作成ボタンの処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,11 +58,12 @@ export default function Page() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authrization: token!,
         },
         body: JSON.stringify({
           title,
           content,
-          thumbnailUrl,
+          thumbnailImageKey,
           categories: selectedCategories,
         }),
       });
@@ -83,8 +94,8 @@ export default function Page() {
           setTitle={setTitle}
           content={content}
           setContent={setContent}
-          thumbnailUrl={thumbnailUrl}
-          setThumbnailUrl={setThumbnailUrl}
+          thumbnailImageKey={thumbnailImageKey}
+          setThumbnailImageKey={setThumbnailImageKey}
           categories={categories}
           selectedCategories={selectedCategories}
           setSelectedCategories={setSelectedCategories}
