@@ -1,10 +1,10 @@
 "use client";
 
 import type { Post } from "@/_types/Post";
+import { supabase } from "@/utils/supabase";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "./../../../utils/supabase";
 
 export default function Page() {
   const { id } = useParams();

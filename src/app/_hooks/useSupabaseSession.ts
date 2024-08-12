@@ -1,8 +1,8 @@
 "use client";
 
+import { supabase } from "@/utils/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { supabase } from "../../utils/supabase";
 
 // ログイン状態をチェック
 export const useSupabaseSession = () => {
@@ -14,13 +14,17 @@ export const useSupabaseSession = () => {
   useEffect(() => {
     const fetcher = async () => {
       const {
-        data: { session }, // 取得したセッションからdataオブジェクト内のsessionオブジェクト（プロパティ）を抽出。session内にはaccess_token、refresh_token、userなどのプロパティが含まれている
+        // 取得したセッションからdataオブジェクト内のsessionオブジェクト（プロパティ）を抽出
+        data: { session }, // session内にaccess_token、refresh_token、userなどのプロパティが含まれている。
+        // 認証情報を取得するための関数。現在のセッション情報を返却。ログインしているかどうか。
       } = await supabase.auth.getSession();
-      // 認証情報を取得するための関数。現在のセッション情報を返却。ログインしているかどうか。
+
       //console.log(session);
       setSettion(session);
-      setToken(session?.access_token || null); // ログイン中の場合はユーザー情報を取得。未ログインであれば、nullが返却
-      setIsLoading(false); // ログイン状態の確認中かどうかの状態。falseで処理完了状態をセット。trueはデータの取得や処理がまだ完了していない状態（ローディング中）。
+      // ログイン中の場合はユーザー情報を取得 未ログインであれば、nullが返却
+      setToken(session?.access_token || null);
+      // ログイン状態の確認中かどうかの状態。
+      setIsLoading(false); // falseで処理完了状態をセット trueはデータの取得や処理がまだ完了していない状態（ローディング中）。
     };
     fetcher();
   }, []);

@@ -1,10 +1,10 @@
 "use client";
 
 import { Category } from "@/_types/Category";
+import { supabase } from "@/utils/supabase";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { supabase } from "../../../../utils/supabase";
 import { CategoriesSelect } from "./CategoriesSelect"; // 同じ階層のインポートはエイリアスを使用できない
 
 // 定義

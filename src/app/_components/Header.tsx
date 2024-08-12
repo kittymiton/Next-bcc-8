@@ -1,13 +1,14 @@
 "use client";
 
 import { useSupabaseSession } from "@/_hooks/useSupabaseSession";
+import { supabase } from "@/utils/supabase";
 import Link from "next/link";
-import { supabase } from "../../utils/supabase";
 
 export const Header: React.FC = () => {
   // ログアウトボタンの処理
   const handleLogout = async () => {
-    await supabase.auth.signOut(); // Supabaseの認証サービスにログアウトのリクエスト送信、ユーザーの認証情報をクリア
+    // Supabaseの認証サービスにログアウトのリクエスト送信、ユーザーの認証情報をクリア
+    await supabase.auth.signOut();
     // ログアウト処理が完了後、トップページにリダイレクト
     window.location.href = "/";
   };
